@@ -193,18 +193,35 @@ describe('Basic user flow for Website', () => {
 
   // Checking to make sure that it remembers us removing everything from the cart
   // after we refresh the page
-  it.skip('Checking number of items in cart on screen after reload', async () => {
+  it('Checking number of items in cart on screen after reload', async () => {
     console.log('Checking number of items in cart on screen after reload...');
 
     /**
-     **** TODO - STEP 7 **** 
+     **** DONE - STEP 7 **** 
      * Reload the page once more, then go through each <product-item> to make sure that it has remembered nothing
        is in the cart - do this by checking the text on the buttons so that they should say "Add to Cart".
      * Also check to make sure that #cart-count is still 0
      * Remember to remove the .skip from this it once you are finished writing this test.
      */
 
-  }, 10000);
+    await page.reload();
+
+    const product_items = await page.$$('product-item');
+    for (let i = 0; i < product_items.length; i++) {
+      console.log(`Checking product item button ${i + 1}/${product_items.length}`);
+      
+      const product_item = product_items[i];
+      const product_item_shadow_root = await product_item.getProperty('shadowRoot');
+      const product_item_button = await product_item_shadow_root.$('button');
+      const button_text = await (await product_item_button.getProperty('innerText')).jsonValue();
+      expect(button_text).toBe('Add to Cart');
+    }
+
+    const cart_count = await page.$('#cart-count');
+    const cart_count_text = await (await cart_count.getProperty('innerText')).jsonValue();
+    expect(cart_count_text).toBe('0');
+
+  }, 15000);
 
   // Checking to make sure that localStorage for the cart is as we'd expect for the
   // cart being empty
