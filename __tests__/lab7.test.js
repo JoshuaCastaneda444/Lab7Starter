@@ -21,7 +21,7 @@ describe('Basic user flow for Website', () => {
   // Check to make sure that all 20 <product-item> elements have data in them
   // We use .skip() here because this test has a TODO that has not been completed yet.
   // Make sure to remove the .skip after you finish the TODO. 
-  it.skip('Make sure <product-item> elements are populated', async () => {
+  it('Make sure <product-item> elements are populated', async () => {
     console.log('Checking to make sure <product-item> elements are populated...');
 
     // Start as true, if any don't have data, swap to false
@@ -35,19 +35,28 @@ describe('Basic user flow for Website', () => {
       });
     });
 
-    console.log(`Checking product item 1/${prodItemsData.length}`);
+    for (let i = 0; i < prodItemsData.length; i++) {
+      const value = prodItemsData[i];
+      console.log(`Checking product item ${i + 1}/${prodItemsData.length}`);
 
     // Make sure the title, price, and image are populated in the JSON
-    firstValue = prodItemsData[0];
-    if (firstValue.title.length == 0) { allArePopulated = false; }
-    if (firstValue.price.length == 0) { allArePopulated = false; }
-    if (firstValue.image.length == 0) { allArePopulated = false; }
+      if (value.title.length == 0) { allArePopulated = false; }
+      if (value.price.length == 0) { allArePopulated = false; }
+      if (value.image.length == 0) { allArePopulated = false; }
+
+      // Checking all the params because why not
+      if (value.category.length == 0) { allArePopulated = false; }
+      if (value.description.length == 0) { allArePopulated = false; }
+      if (value.id.length == 0) { allArePopulated = false; }
+      if (value.rating.count.length == 0) { allArePopulated = false; }
+      if (value.rating.rate.length == 0) { allArePopulated = false; }
+    }
 
     // Expect allArePopulated to still be true
     expect(allArePopulated).toBe(true);
 
     /**
-    **** TODO - STEP 1 ****
+    **** DONE - STEP 1 ****
     * Right now this function is only checking the first <product-item> it found, make it so that
       it checks every <product-item> it found
     * Remove the .skip from this it once you are finished writing this test.
