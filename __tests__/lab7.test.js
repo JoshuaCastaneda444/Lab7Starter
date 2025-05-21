@@ -149,15 +149,21 @@ describe('Basic user flow for Website', () => {
   }, 30000);
 
   // Check to make sure that the cart in localStorage is what you expect
-  it.skip('Checking the localStorage to make sure cart is correct', async () => {
+  it('Checking the localStorage to make sure cart is correct', async () => {
 
     /**
-     **** TODO - STEP 5 **** 
+     **** DONE - STEP 5 **** 
      * At this point the item 'cart' in localStorage should be 
        '[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]', check to make sure it is
      * Remember to remove the .skip from this it once you are finished writing this test.
      */
 
+    // Just copied from storage#getItems, wasn't sure how to load scripts since just calling getItems() didn't work...
+    // I suppose it would be better to somehow call storage#getItems since in theory that getter function could change and
+    // then this test wouldn't be helpful. If that did happen though, I guess it would fail anyway since the expected
+    // toBe value would probably be different...
+    const cart = await page.evaluate(() => JSON.parse(localStorage.getItem('cart')) || []);
+    expect(cart).toStrictEqual([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]);
   });
 
   // Checking to make sure that if you remove all of the items from the cart that the cart
