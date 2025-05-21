@@ -141,8 +141,6 @@ describe('Basic user flow for Website', () => {
       expect(button_text).toBe('Remove from Cart');
     }
 
-    console.log("Prod items size: " + product_items.length);
-
     const cart_count = await page.$('#cart-count');
     const cart_count_text = await (await cart_count.getProperty('innerText')).jsonValue();
     expect(cart_count_text).toBe('20');
@@ -168,17 +166,30 @@ describe('Basic user flow for Website', () => {
 
   // Checking to make sure that if you remove all of the items from the cart that the cart
   // number in the top right of the screen is 0
-  it.skip('Checking number of items in cart on screen after removing from cart', async () => {
+  it('Checking number of items in cart on screen after removing from cart', async () => {
     console.log('Checking number of items in cart on screen...');
 
     /**
-     **** TODO - STEP 6 **** 
+     **** DONE - STEP 6 **** 
      * Go through and click "Remove from Cart" on every single <product-item>, just like above.
      * Once you have, check to make sure that #cart-count is now 0
      * Remember to remove the .skip from this it once you are finished writing this test.
      */
 
-  }, 10000);
+    const product_items = await page.$$('product-item');
+    for (let i = 0; i < product_items.length; i++) {
+      console.log(`Clicking product item button ${i + 1}/${product_items.length}`);
+
+      const product_item = product_items[i];
+      const product_item_shadow_root = await product_item.getProperty('shadowRoot');
+      const product_item_button = await product_item_shadow_root.$('button');
+      await product_item_button.click();
+    }
+
+    const cart_count = await page.$('#cart-count');
+    const cart_count_text = await (await cart_count.getProperty('innerText')).jsonValue();
+    expect(cart_count_text).toBe('0');
+  }, 30000);
 
   // Checking to make sure that it remembers us removing everything from the cart
   // after we refresh the page
