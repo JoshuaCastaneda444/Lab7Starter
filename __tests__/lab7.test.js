@@ -39,7 +39,7 @@ describe('Basic user flow for Website', () => {
       const value = prodItemsData[i];
       console.log(`Checking product item ${i + 1}/${prodItemsData.length}`);
 
-    // Make sure the title, price, and image are populated in the JSON
+      // Make sure the title, price, and image are populated in the JSON
       if (value.title.length == 0) { allArePopulated = false; }
       if (value.price.length == 0) { allArePopulated = false; }
       if (value.image.length == 0) { allArePopulated = false; }
@@ -76,7 +76,7 @@ describe('Basic user flow for Website', () => {
      * Once you have the button, you can click it and check the innerText property of the button.
      * Once you have the innerText property, use innerText.jsonValue() to get the text value of it
      * Remember to remove the .skip from this it once you are finished writing this test.
-     */
+     */  
 
     const first_product_item = await page.$('product-item');
     const first_product_item_shadow_root = await first_product_item.getProperty('shadowRoot');
@@ -84,6 +84,8 @@ describe('Basic user flow for Website', () => {
     await first_product_item_button.click();
     const button_text = await (await first_product_item_button.getProperty('innerText')).jsonValue();
     expect(button_text).toBe('Remove from Cart');
+    // Unclick button or it breaks next test
+    await first_product_item_button.click();
   }, 2500);
 
   // Check to make sure that after clicking "Add to Cart" on every <product-item> that the Cart
@@ -115,18 +117,36 @@ describe('Basic user flow for Website', () => {
   }, 20000);
 
   // Check to make sure that after you reload the page it remembers all of the items in your cart
-  it.skip('Checking number of items in cart on screen after reload', async () => {
+  it('Checking number of items in cart on screen after reload', async () => {
     console.log('Checking number of items in cart on screen after reload...');
 
     /**
-     **** TODO - STEP 4 **** 
+     **** DONE - STEP 4 **** 
      * Reload the page, then select all of the <product-item> elements, and check every
        element to make sure that all of their buttons say "Remove from Cart".
      * Also check to make sure that #cart-count is still 20
      * Remember to remove the .skip from this it once you are finished writing this test.
      */
+    
+    await page.reload();
 
-  }, 10000);
+    const product_items = await page.$$('product-item');
+    for (let i = 0; i < product_items.length; i++) {
+      console.log(`Checking product item button ${i + 1}/${product_items.length}`);
+      
+      const product_item = product_items[i];
+      const product_item_shadow_root = await product_item.getProperty('shadowRoot');
+      const product_item_button = await product_item_shadow_root.$('button');
+      const button_text = await (await product_item_button.getProperty('innerText')).jsonValue();
+      expect(button_text).toBe('Remove from Cart');
+    }
+
+    console.log("Prod items size: " + product_items.length);
+
+    const cart_count = await page.$('#cart-count');
+    const cart_count_text = await (await cart_count.getProperty('innerText')).jsonValue();
+    expect(cart_count_text).toBe('20');
+  }, 30000);
 
   // Check to make sure that the cart in localStorage is what you expect
   it.skip('Checking the localStorage to make sure cart is correct', async () => {
